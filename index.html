@@ -180,6 +180,14 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
+        .next-btn {
+            display: block;
+            margin: 20px auto;
+            background: #4ecdc4;
+        }
+        .next-btn:hover {
+            background: #26a69a;
+        }
         .mcq {
             background: #f8f9fa;
             padding: 20px;
@@ -249,12 +257,14 @@
         <section>
             <h2>Aim</h2>
             <p>To understand and simulate the monitoring of ECG signals using bipolar limb leads I, II, and III in a virtual environment.</p>
+            <button class="next-btn" data-next="theory">Next: Theory</button>
         </section>
     </div>
     <div class="container" id="theory">
         <section>
             <h2>Theory</h2>
             <p>The electrocardiogram (ECG) records the electrical activity of the heart. Bipolar limb leads (I, II, III) are formed by connecting electrodes on the limbs. Lead I: RA to LA, Lead II: RA to LL, Lead III: LA to LL. This simulation allows interactive exploration of these leads.</p>
+            <button class="next-btn" data-next="pretest">Next: Pretest</button>
         </section>
     </div>
     <div class="container" id="pretest">
@@ -272,6 +282,7 @@
                 <label><input type="radio" name="q2" value="b"> RA and LA</label>
                 <label><input type="radio" name="q2" value="c"> LA and LL</label>
             </div>
+            <button class="next-btn" data-next="procedure">Next: Procedure</button>
         </section>
     </div>
     <div class="container" id="procedure">
@@ -283,6 +294,7 @@
                 <li>Adjust parameters like heart rate or noise level for advanced analysis.</li>
                 <li>Record observations and compare leads.</li>
             </ol>
+            <button class="next-btn" data-next="simulation">Next: Simulation</button>
         </section>
     </div>
     <div class="container" id="simulation">
@@ -329,6 +341,7 @@
                 </div>
             </div>
             <p id="leadInfo">Select a lead to view the ECG waveform and connections.</p>
+            <button class="next-btn" data-next="references">Next: References</button>
         </section>
     </div>
     <div class="container" id="references">
@@ -338,6 +351,7 @@
                 <li>Standard ECG textbooks.</li>
                 <li>Biomedical Engineering Virtual Labs resources.</li>
             </ul>
+            <button class="next-btn" data-next="feedback">Next: Feedback</button>
         </section>
     </div>
     <div class="container" id="feedback">
@@ -357,14 +371,29 @@
         // Navigation and Section Switching
         const navButtons = document.querySelectorAll('nav button');
         const containers = document.querySelectorAll('.container');
+        const nextButtons = document.querySelectorAll('.next-btn');
 
+        // Function to show a section
+        function showSection(sectionId) {
+            containers.forEach(container => container.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            document.getElementById('nav' + sectionId.charAt(0).toUpperCase() + sectionId.slice(1)).classList.add('active');
+        }
+
+        // Nav button clicks
         navButtons.forEach(button => {
             button.addEventListener('click', () => {
-                navButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                containers.forEach(container => container.classList.remove('active'));
                 const targetId = button.id.replace('nav', '').toLowerCase();
-                document.getElementById(targetId).classList.add('active');
+                showSection(targetId);
+            });
+        });
+
+        // Next button clicks
+        nextButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const nextId = button.getAttribute('data-next');
+                showSection(nextId);
             });
         });
 
@@ -392,39 +421,4 @@
         // Draw oscilloscope grid
         function drawGrid() {
             ctx.strokeStyle = '#444';
-            ctx.lineWidth = 1;
-            for (let i = 0; i < canvas.width; i += 20) {
-                ctx.beginPath();
-                ctx.moveTo(i, 0);
-                ctx.lineTo(i, canvas.height);
-                ctx.stroke();
-            }
-            for (let i = 0; i < canvas.height; i += 20) {
-                ctx.beginPath();
-                ctx.moveTo(0, i);
-                ctx.lineTo(canvas.width, i);
-                ctx.stroke();
-            }
-        }
-
-        // Sample ECG waveform data
-        function drawWaveform(lead) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawGrid();
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            for (let i = 0; i < canvas.width; i++) {
-                let amplitude = 50;
-                if (lead === 'II') amplitude = 70;
-                if (lead === 'III') amplitude = 40;
-                y = canvas.height / 2 + amplitude * Math.sin((i + x) * 0.1);
-                ctx.lineTo(i, y);
-            }
-            ctx.strokeStyle = '#4ecdc4';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-        }
-
-        function animate() {
-            x += 2;
-            drawWave
+            ctx.line
