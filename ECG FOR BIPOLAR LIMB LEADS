@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Labs - ECG Bipolar Limb Leads | SRM KTR BME</title>
+    <style>
+        /* Advanced UI Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        header {
+            background: #fff;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-bottom: 3px solid #007bff;
+        }
+        header h1 {
+            margin: 0;
+            color: #007bff;
+            font-size: 2.5em;
+        }
+        header p {
+            margin: 5px 0;
+            color: #666;
+        }
+        nav {
+            background: #343a40;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        nav a:hover {
+            background: #007bff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        section {
+            margin-bottom: 40px;
+        }
+        h2 {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .simulation {
+            text-align: center;
+        }
+        .sim-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .human-diagram {
+            position: relative;
+            width: 300px;
+            height: 500px;
+        }
+        .electrode {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff0000;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .electrode:hover {
+            background: #ff6666;
+        }
+        .electrode.ra { top: 150px; left: 50px; }
+        .electrode.la { top: 150px; right: 50px; }
+        .electrode.ll { top: 400px; left: 120px; }
+        .electrode.rl { top: 400px; right: 120px; }
+        .connection {
+            position: absolute;
+            stroke: #007bff;
+            stroke-width: 3;
+            fill: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        canvas {
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #343a40;
+            color: #fff;
+            margin-top: 20px;
+        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav a {
+                display: block;
+                margin: 5px 0;
+            }
+            .container {
+                padding: 10px;
+            }
+            .sim-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Virtual Labs</h1>
+        <p>Monitoring of Electrocardiogram (ECG) for Bipolar Limb Leads I, II, and III</p>
+        <p>SRM Institute of Science and Technology, Kattankulathur - Department of Biomedical Engineering</p>
+    </header>
+    <nav>
+        <a href="#aim">Aim</a>
+        <a href="#theory">Theory</a>
+        <a href="#pretest">Pretest</a>
+        <a href="#procedure">Procedure</a>
+        <a href="#simulation">Simulation</a>
+        <a href="#posttest">Posttest</a>
+        <a href="#references">References</a>
+        <a href="#feedback">Feedback</a>
+    </nav>
+    <div class="container">
+        <section id="aim">
+            <h2>Aim</h2>
+            <p>To understand and simulate the monitoring of ECG signals using bipolar limb leads I, II, and III in a virtual environment.</p>
+        </section>
+        <section id="theory">
+            <h2>Theory</h2>
+            <p>The electrocardiogram (ECG) records the electrical activity of the heart. Bipolar limb leads (I, II, III) are formed by connecting electrodes on the limbs. Lead I: RA to LA, Lead II: RA to LL, Lead III: LA to LL. This simulation allows interactive exploration of these leads.</p>
+        </section>
+        <section id="pretest">
+            <h2>Pretest</h2>
+            <p>Answer the following questions to assess your prior knowledge:</p>
+            <ul>
+                <li>What is the purpose of ECG?</li>
+                <li>Describe the placement of electrodes for Lead I.</li>
+            </ul>
+        </section>
+        <section id="procedure">
+            <h2>Procedure</h2>
+            <ol>
+                <li>Select a lead (I, II, or III) from the simulation panel.</li>
+                <li>Observe the ECG waveform on the display and the highlighted connections on the human diagram.</li>
+                <li>Adjust parameters like heart rate or noise level for advanced analysis.</li>
+                <li>Record observations and compare leads.</li>
+            </ol>
+        </section>
+        <section id="simulation" class="simulation">
+            <h2>Simulation</h2>
+            <p>Interactive ECG Simulator for Bipolar Limb Leads with Human Lead Connections</p>
+            <div>
+                <button id="leadI">Lead I</button>
+                <button id="leadII">Lead II</button>
+                <button id="leadIII">Lead III</button>
+                <button id="startSim">Start Simulation</button>
+                <button id="stopSim">Stop Simulation</button>
+            </div>
+            <div class="sim-container">
+                <div class="human-diagram">
+                    <!-- Simple SVG Human Diagram -->
+                    <svg width="300" height="500" viewBox="0 0 300 500">
+                        <!-- Head -->
+                        <circle cx="150" cy="50" r="30" fill="#f0f0f0" stroke="#000" stroke-width="2"/>
+                        <!-- Body -->
+                        <rect x="130" y="80" width="40" height="100" fill="#f0f0f0" stroke="#000" stroke-width="2"/>
+                        <!-- Arms -->
+                        <rect x="90" y="100" width="40" height="80" fill="#f0f0f0" stroke="#000" stroke-width="2"/>
+                        <rect x="170" y="100" width="40" height="80" fill="#f0f0f0" stroke="#000" stroke-width="2"/>
+                        <!-- Legs -->
+                        <rect x="130" y="180" width="20" height="100" fill="#f0f0f0" stroke="#000" stroke-width="2"/>
+                        <rect x="150" y="180" width="20" height="100" fill="#f0f0f0" stroke="#000" stroke-width="2"/>
+                        <!-- Electrodes -->
+                        <circle class="electrode ra" cx="100" cy="150" r="10" fill="#ff0000"/>
+                        <circle class="electrode la" cx="200" cy="150" r="10" fill="#ff0000"/>
+                        <circle class="electrode ll" cx="140" cy="400" r="10" fill="#ff0000"/>
+                        <circle class="electrode rl" cx="160" cy="400" r="10" fill="#ff0000"/>
+                        <!-- Connections (initially hidden) -->
+                        <line class="connection leadI" x1="100" y1="150" x2="200" y2="150" stroke="#007bff" stroke-width="3" opacity="0"/>
+                        <line class="connection leadII" x1="100" y1="150" x2="140" y2="400" stroke="#007bff" stroke-width="3" opacity="0"/>
+                        <line class="connection leadIII" x1="200" y1="150" x2="140" y2="400" stroke="#007bff" stroke-width="3" opacity="0"/>
+                    </svg>
+                </div>
+                <canvas id="ecgCanvas" width="600" height="300"></canvas>
+            </div>
+            <p id="leadInfo">Select a lead to view the ECG waveform and connections.</p>
+        </section>
+        <section id="posttest">
+            <h2>Posttest</h2>
+            <p>Evaluate your understanding:</p>
+            <ul>
+                <li>What differences do you observe between Lead I and Lead II?</li>
+                <li>Explain the significance of Lead III.</li>
+            </ul>
+        </section>
+        <section id="references">
+            <h2>References</h2>
+            <ul>
+                <li>Standard ECG textbooks.</li>
+                <li>Biomedical Engineering Virtual Labs resources.</li>
+            </ul>
+        </section>
+        <section id="feedback">
+            <h2>Feedback</h2>
+            <p>We value your feedback! Please share your thoughts on this virtual lab.</p>
+            <textarea placeholder="Enter your feedback here..." rows="4" cols="50"></textarea>
+            <br>
+            <button>Submit Feedback</button>
+        </section>
+    </div>
+    <footer>
+        <p>&copy; 2023 SRM Institute of Science and Technology, Kattankulathur - BME Virtual Labs. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Advanced Interfacing with JavaScript for Simulation
+        const canvas = document.getElementById('ecgCanvas');
+        const ctx = canvas.getContext('2d');
+        const leadInfo = document.getElementById('leadInfo');
+        const connections = document.querySelectorAll('.connection');
+        let currentLead = 'I';
+        let animationId;
+        let x = 0;
+        let y = canvas.height / 2;
+
+        // Hide all connections initially
+        function hideConnections() {
+            connections.forEach(conn => conn.style.opacity = '0');
+        }
+
+        // Show specific lead connection
+        function showConnection(lead) {
+            hideConnections();
+            document.querySelector(`.connection.lead${lead}`).style.opacity = '1';
+        }
+
+        // Sample ECG waveform data (simplified sine wave for demo; replace with real ECG data)
+        function drawWaveform(lead) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            for (let i = 0; i < canvas.width; i++) {
+                // Simulate different waveforms for leads (placeholder logic)
+                let amplitude = 50;
+                if (lead === 'II') amplitude = 70;
+                if (lead === 'III') amplitude = 40;
+                y = canvas.height / 2 + amplitude * Math.sin((i + x) * 0.1);
+                ctx.lineTo(i, y);
+            }
+            ctx.strokeStyle = '#007bff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function animate() {
+            x += 2; // Speed of waveform
+            drawWaveform(currentLead);
+            animationId = requestAnimationFrame(animate);
+        }
+
+        document.getElementById('leadI').addEventListener('click', () => {
+            currentLead = 'I';
+            leadInfo.textContent = 'Viewing Lead I: RA to LA';
+            showConnection('I');
+        });
+        document.getElementById('leadII').addEventListener('click', () => {
+            currentLead = 'II';
+            leadInfo.textContent = 'Viewing Lead II: RA to LL';
+            showConnection('II');
+        });
+        document.getElementById('leadIII').addEventListener('click', () => {
+            currentLead = 'III';
+            leadInfo.textContent = 'Viewing Lead III: LA to LL';
+            showConnection('III');
+        });
+        document.getElementById('startSim').addEventListener('click', () => {
+            if (!animationId) animate();
+        });
+        document.getElementById('stopSim').addEventListener('click', () => {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        });
+
+        // Initial setup
+        hideConnections();
+        drawWaveform(currentLead);
+    </script>
+</body>
+</html>
