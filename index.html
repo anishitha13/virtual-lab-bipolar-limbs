@@ -404,7 +404,7 @@
             }
         }
 
-        // Sample ECG waveform data
+        // Sample ECG waveform data (simplified for demo)
         function drawWaveform(lead) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawGrid();
@@ -428,4 +428,5 @@
             animationId = requestAnimationFrame(animate);
         }
 
-        document.getElementById('leadI').addEventListener('click', () =>
+        // Lead button events
+        document.getElementById('
