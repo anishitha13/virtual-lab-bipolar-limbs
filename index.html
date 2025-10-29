@@ -378,7 +378,8 @@
             containers.forEach(container => container.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
             navButtons.forEach(btn => btn.classList.remove('active'));
-            document.getElementById('nav' + sectionId.charAt(0).toUpperCase() + sectionId.slice(1)).classList.add('active');
+            const navId = 'nav' + sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+            document.getElementById(navId).classList.add('active');
         }
 
         // Nav button clicks
@@ -420,5 +421,4 @@
 
         // Draw oscilloscope grid
         function drawGrid() {
-            ctx.strokeStyle = '#444';
-            ctx.line
+            ctx.stroke
