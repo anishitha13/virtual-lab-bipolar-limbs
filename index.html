@@ -64,6 +64,41 @@
         .simulation {
             text-align: center;
         }
+        .sim-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .human-diagram {
+            position: relative;
+            width: 300px;
+            height: 500px;
+        }
+        .electrode {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff0000;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .electrode:hover {
+            background: #ff6666;
+        }
+        .electrode.ra { top: 150px; left: 50px; }
+        .electrode.la { top: 150px; right: 50px; }
+        .electrode.ll { top: 400px; left: 120px; }
+        .electrode.rl { top: 400px; right: 120px; }
+        .connection {
+            position: absolute;
+            stroke: #007bff;
+            stroke-width: 3;
+            fill: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
         canvas {
             border: 2px solid #007bff;
             border-radius: 10px;
@@ -97,6 +132,9 @@
             }
             .container {
                 padding: 10px;
+            }
+            .sim-container {
+                flex-direction: column;
             }
         }
     </style>
@@ -138,14 +176,14 @@
             <h2>Procedure</h2>
             <ol>
                 <li>Select a lead (I, II, or III) from the simulation panel.</li>
-                <li>Observe the ECG waveform on the display.</li>
+                <li>Observe the ECG waveform on the display and the highlighted connections on the human diagram.</li>
                 <li>Adjust parameters like heart rate or noise level for advanced analysis.</li>
                 <li>Record observations and compare leads.</li>
             </ol>
         </section>
         <section id="simulation" class="simulation">
             <h2>Simulation</h2>
-            <p>Interactive ECG Simulator for Bipolar Limb Leads</p>
+            <p>Interactive ECG Simulator for Bipolar Limb Leads with Human Lead Connections</p>
             <div>
                 <button id="leadI">Lead I</button>
                 <button id="leadII">Lead II</button>
@@ -153,8 +191,34 @@
                 <button id="startSim">Start Simulation</button>
                 <button id="stopSim">Stop Simulation</button>
             </div>
-            <canvas id="ecgCanvas" width="800" height="400"></canvas>
-            <p id="leadInfo">Select a lead to view the ECG waveform.</p>
+            <div class="sim-container">
+                <div class="human-diagram">
+                    <!-- Simple SVG Human Diagram -->
+                    <svg width="300" height="500" viewBox="0 0 300 500">
+                        <!-- Head -->
+                        <circle cx="150" cy="50" r="30" fill="#f0f0f0" stroke="#000" stroke-width="2"/>
+                        <!-- Body -->
+                        <rect x="130" y="80" width="40" height="100" fill="#f0f0f0" stroke="#000" stroke-width="2"/>
+                        <!-- Arms -->
+                        <rect x="90" y="100" width="40" height="80" fill="#f0f0f0" stroke="#000" stroke-width="2"/>
+                        <rect x="170" y="100" width="40" height="80" fill="#f0f0f0" stroke="#000" stroke-width="2"/>
+                        <!-- Legs -->
+                        <rect x="130" y="180" width="20" height="100" fill="#f0f0f0" stroke="#000" stroke-width="2"/>
+                        <rect x="150" y="180" width="20" height="100" fill="#f0f0f0" stroke="#000" stroke-width="2"/>
+                        <!-- Electrodes -->
+                        <circle class="electrode ra" cx="100" cy="150" r="10" fill="#ff0000"/>
+                        <circle class="electrode la" cx="200" cy="150" r="10" fill="#ff0000"/>
+                        <circle class="electrode ll" cx="140" cy="400" r="10" fill="#ff0000"/>
+                        <circle class="electrode rl" cx="160" cy="400" r="10" fill="#ff0000"/>
+                        <!-- Connections (initially hidden) -->
+                        <line class="connection leadI" x1="100" y1="150" x2="200" y2="150" stroke="#007bff" stroke-width="3" opacity="0"/>
+                        <line class="connection leadII" x1="100" y1="150" x2="140" y2="400" stroke="#007bff" stroke-width="3" opacity="0"/>
+                        <line class="connection leadIII" x1="200" y1="150" x2="140" y2="400" stroke="#007bff" stroke-width="3" opacity="0"/>
+                    </svg>
+                </div>
+                <canvas id="ecgCanvas" width="600" height="300"></canvas>
+            </div>
+            <p id="leadInfo">Select a lead to view the ECG waveform and connections.</p>
         </section>
         <section id="posttest">
             <h2>Posttest</h2>
@@ -188,10 +252,22 @@
         const canvas = document.getElementById('ecgCanvas');
         const ctx = canvas.getContext('2d');
         const leadInfo = document.getElementById('leadInfo');
+        const connections = document.querySelectorAll('.connection');
         let currentLead = 'I';
         let animationId;
         let x = 0;
         let y = canvas.height / 2;
+
+        // Hide all connections initially
+        function hideConnections() {
+            connections.forEach(conn => conn.style.opacity = '0');
+        }
+
+        // Show specific lead connection
+        function showConnection(lead) {
+            hideConnections();
+            document.querySelector(`.connection.lead${lead}`).style.opacity = '1';
+        }
 
         // Sample ECG waveform data (simplified sine wave for demo; replace with real ECG data)
         function drawWaveform(lead) {
@@ -220,14 +296,17 @@
         document.getElementById('leadI').addEventListener('click', () => {
             currentLead = 'I';
             leadInfo.textContent = 'Viewing Lead I: RA to LA';
+            showConnection('I');
         });
         document.getElementById('leadII').addEventListener('click', () => {
             currentLead = 'II';
             leadInfo.textContent = 'Viewing Lead II: RA to LL';
+            showConnection('II');
         });
         document.getElementById('leadIII').addEventListener('click', () => {
             currentLead = 'III';
             leadInfo.textContent = 'Viewing Lead III: LA to LL';
+            showConnection('III');
         });
         document.getElementById('startSim').addEventListener('click', () => {
             if (!animationId) animate();
@@ -237,7 +316,8 @@
             animationId = null;
         });
 
-        // Initial draw
+        // Initial setup
+        hideConnections();
         drawWaveform(currentLead);
     </script>
 </body>
